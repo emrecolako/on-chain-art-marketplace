@@ -12,12 +12,13 @@ type SearchCollectionsAPISuccessResponse =
 
 type Props = {
   communityId?: string
+  collectionSetId?: string
   initialResults?: SearchCollectionsAPISuccessResponse
 }
 
 const PROXY_API_BASE = process.env.NEXT_PUBLIC_PROXY_API_BASE
 
-const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
+const SearchCollections: FC<Props> = ({ communityId, collectionSetId, initialResults }) => {
   const router = useRouter()
   const [focused, setFocused] = useState<boolean>(false)
   const [results, setResults] = useState<SearchCollectionsAPISuccessResponse>(
@@ -30,6 +31,10 @@ const SearchCollections: FC<Props> = ({ communityId, initialResults }) => {
     const query: paths['/search/collections/v1']['get']['parameters']['query'] =
       {
         limit: 6,
+      }
+
+      if (collectionSetId && collectionSetId !== 'www' && collectionSetId !== 'localhost') {
+        query.collectionsSetId = collectionSetId
       }
 
     if (communityId && communityId !== 'www' && communityId !== 'localhost') {
