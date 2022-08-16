@@ -23,7 +23,7 @@ interface Props {
   collections: Array<HomeCollectionType>;
 }
 
-const Home: NextPage<Props> = ({ collections }) => {
+const Onchain: NextPage<Props> = ({ collections }) => {
   // States
   const [searchText, setSearchText] = useState(""); // Search value
   const [dropdown, setDropdown] = useState("Recent"); // Dropdown Value
@@ -351,4 +351,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
   return { props: { collections } };
 };
 
-export default Home;
+export default Onchain;

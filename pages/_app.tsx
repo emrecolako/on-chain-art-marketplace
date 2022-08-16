@@ -160,12 +160,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [size, router]);
 
   // Disabling sidebar animation onload
-  useEffect(() => {
-    document.body.className = "preload";
-    setTimeout(() => {
-      document.body.className = "";
-    }, 300);
-  }, []);
+  // useEffect(() => {
+  //   document.body.className = "preload";
+  //   setTimeout(() => {
+  //     document.body.className = "";
+  //   }, 300);
+  // }, []);
 
   // Analytics
   useEffect(() => {
@@ -184,78 +184,37 @@ function MyApp({ Component, pageProps }: AppProps) {
    * @param {ref} sidebar ref
    * @param {function} run if clicked outside of sidebar
    */
-     function useOnClickOutside(
-      ref: React.RefObject<HTMLDivElement>,
-      handler: (e: any) => void
-    ): void {
-      useEffect(() => {
-        const listener = (event: any) => {
-          // Do nothing if clicking sidebar or sidebar button elements
-          if (
-            !ref.current ||
-            ref.current.contains(event.target) ||
-            !sidebarButtonRef.current ||
-            sidebarButtonRef.current.contains(event.target)
-          ) {
-            return;
-          }
-  
-          // Close sidebar
-          handler(event);
-        };
-  
-        // Listen for mouse events.
-        document.addEventListener("mousedown", listener);
-        document.addEventListener("touchstart", listener);
-  
-        // Unmount listeners.
-        return () => {
-          document.removeEventListener("mousedown", listener);
-          document.removeEventListener("touchstart", listener);
-        };
-      }, [ref, handler]);
-    }
+  function useOnClickOutside(
+    ref: React.RefObject<HTMLDivElement>,
+    handler: (e: any) => void
+  ): void {
+    useEffect(() => {
+      const listener = (event: any) => {
+        // Do nothing if clicking sidebar or sidebar button elements
+        if (
+          !ref.current ||
+          ref.current.contains(event.target) ||
+          !sidebarButtonRef.current ||
+          sidebarButtonRef.current.contains(event.target)
+        ) {
+          return;
+        }
 
+        // Close sidebar
+        handler(event);
+      };
 
-  /**
-   * Check current route, return correct header
-   * @returns {string} of correct header name
-   */
-  function getHeader(): string {
-    switch (router.asPath) {
-      case "/info":
-        return "About On-Chain";
-        break;
-      case "/readings":
-        return "Readings";
-        break;
-      case "/submit":
-        return "Submit Collection";
-        break;
-      case "/cc0":
-        return "CC0";
-        break;
-      default:
-        return router.asPath;
-    }
+      // Listen for mouse events.
+      document.addEventListener("mousedown", listener);
+      document.addEventListener("touchstart", listener);
+
+      // Unmount listeners.
+      return () => {
+        document.removeEventListener("mousedown", listener);
+        document.removeEventListener("touchstart", listener);
+      };
+    }, [ref, handler]);
   }
-
-    /**
-   * Renders correct header UI
-   * @returns {JSX.Element | undefined} header element or undefined if no correct header
-   */
-     function renderHeaders(): JSX.Element | undefined {
-      if (router.asPath !== "/" && !router.asPath.includes("/collection/")) {
-        return <Header show={showSidebar} headings={getHeader()} />;
-      } else if (router.asPath.includes("/collection")) {
-        return <BackButton />;
-      }
-    }
-
-    // Add mouseDown listener to sideBar ref.
-    useOnClickOutside(sidebarRef, () => setShowSidebar(false));
-
-
 
   return (
     <ReservoirKitProvider
