@@ -93,6 +93,7 @@ const Navbar: FC = () => {
           setFilterComponent(
             <SearchCollections
               communityId={COMMUNITY}
+              collectionSetId={COLLECTION_SET_ID}
               initialResults={initialResults}
             />
           )

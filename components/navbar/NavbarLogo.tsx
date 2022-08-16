@@ -14,7 +14,7 @@ type Props = {
 
 const NavbarLogo: FC<Props> = ({ variant, className }) => {
   const logo = NAVBAR_LOGO || '/reservoir.svg'
-  const desktopLogo = DESKTOP_NAVBAR_LOGO || '/reservoir-desktop.svg'
+  const desktopLogo = DESKTOP_NAVBAR_LOGO || '/onchain.svg'
   const logoAlt = SOURCE_ID ? `${SOURCE_ID} Logo` : 'Reservoir Logo'
   const mobileVariant = variant == 'mobile'
   const desktopVariant = variant == 'desktop'
@@ -25,7 +25,12 @@ const NavbarLogo: FC<Props> = ({ variant, className }) => {
       <a
         className={`relative inline-flex flex-none items-center gap-1 ${className}`}
       >
-        <img
+        <header>
+            <Link href="/" passHref>
+              <h1>On-Chain Art Marketplace</h1>
+            </Link>
+          </header>
+        {/* <img
           src={logo}
           alt={logoAlt}
           className={`h-9 w-auto ${!variant ? 'md:hidden' : ''} ${
@@ -38,7 +43,7 @@ const NavbarLogo: FC<Props> = ({ variant, className }) => {
           className={`h-9 w-auto md:block ${
             !variant ? 'hidden md:block' : ''
           } ${mobileVariant ? 'hidden' : ''} ${desktopVariant ? 'block' : ''}`}
-        />
+        /> */}
         {isTestNet && (
           <div
             className={`reservoir-tiny inline rounded-[4px] bg-[#EFC45C] p-1 py-[2px]

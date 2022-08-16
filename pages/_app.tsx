@@ -32,7 +32,28 @@ import {
   ReservoirKitProvider,
   ReservoirKitTheme,
 } from '@reservoir0x/reservoir-kit-ui'
-import { useEffect, useState } from 'react'
+import { useEffect,useRef, useState } from 'react'
+
+//0xchainart imports
+import styled, { createGlobalStyle } from "styled-components"; // Styles
+import Head from "next/head"; // Next head
+import Link from "next/link"; // Next link
+import { useRouter } from "next/router"; // Next router
+import * as gtag from "../lib/gtag"; // Analytics: Google Tags
+
+// Component imports
+import Header from "../components/onchainart/Header";
+import BackButton from "../components/onchainart/BackButton";
+import { SidebarButtonIcon } from "../components/onchainart/Icons";
+import SidebarLinks from "../components/onchainart/SidebarLinks";
+
+// Hooks + Helpers import
+import { useWindowSize, Size } from "../hooks/useWindowSize";
+
+// Style imports
+import { theme } from "../styles/theme";
+const isProduction = process.env.NODE_ENV === "production";
+
 
 // Select a custom ether.js interface for connecting to a network
 // Reference = https://wagmi-xyz.vercel.app/docs/provider#provider-optional
@@ -84,6 +105,19 @@ const client = createClient({
 })
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // States
+  const [showSidebar, setShowSidebar] = useState(false);
+  // Refs
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const sidebarButtonRef = useRef<HTMLDivElement>(null);
+  const sidebarLinksRef = useRef<HTMLDivElement>(null);
+
+  // Hooks: get window size to open or close sidebar
+  const size: Size = useWindowSize();
+  const router = useRouter();
+
+
   const defaultTheme = DARK_MODE_ENABLED ? 'dark' : 'light'
   const [reservoirKitTheme, setReservoirKitTheme] = useState<
     ReservoirKitTheme | undefined
@@ -114,6 +148,114 @@ function MyApp({ Component, pageProps }: AppProps) {
       )
     }
   }, [defaultTheme])
+
+  useEffect(() => {
+    if (size.width) {
+      if (size.width < 1350) {
+        setShowSidebar(false);
+        return;
+      }
+    }
+    setShowSidebar(true);
+  }, [size, router]);
+
+  // Disabling sidebar animation onload
+  useEffect(() => {
+    document.body.className = "preload";
+    setTimeout(() => {
+      document.body.className = "";
+    }, 300);
+  }, []);
+
+  // Analytics
+  useEffect(() => {
+    const handleRouteChange = (url: URL) => {
+      /* invoke analytics function only for production */
+      if (isProduction) gtag.pageview(url);
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
+
+    /**
+   * Sidebar open: click outside of sidebar, close the sidebar
+   * @param {ref} sidebar ref
+   * @param {function} run if clicked outside of sidebar
+   */
+     function useOnClickOutside(
+      ref: React.RefObject<HTMLDivElement>,
+      handler: (e: any) => void
+    ): void {
+      useEffect(() => {
+        const listener = (event: any) => {
+          // Do nothing if clicking sidebar or sidebar button elements
+          if (
+            !ref.current ||
+            ref.current.contains(event.target) ||
+            !sidebarButtonRef.current ||
+            sidebarButtonRef.current.contains(event.target)
+          ) {
+            return;
+          }
+  
+          // Close sidebar
+          handler(event);
+        };
+  
+        // Listen for mouse events.
+        document.addEventListener("mousedown", listener);
+        document.addEventListener("touchstart", listener);
+  
+        // Unmount listeners.
+        return () => {
+          document.removeEventListener("mousedown", listener);
+          document.removeEventListener("touchstart", listener);
+        };
+      }, [ref, handler]);
+    }
+
+
+  /**
+   * Check current route, return correct header
+   * @returns {string} of correct header name
+   */
+  function getHeader(): string {
+    switch (router.asPath) {
+      case "/info":
+        return "About On-Chain";
+        break;
+      case "/readings":
+        return "Readings";
+        break;
+      case "/submit":
+        return "Submit Collection";
+        break;
+      case "/cc0":
+        return "CC0";
+        break;
+      default:
+        return router.asPath;
+    }
+  }
+
+    /**
+   * Renders correct header UI
+   * @returns {JSX.Element | undefined} header element or undefined if no correct header
+   */
+     function renderHeaders(): JSX.Element | undefined {
+      if (router.asPath !== "/" && !router.asPath.includes("/collection/")) {
+        return <Header show={showSidebar} headings={getHeader()} />;
+      } else if (router.asPath.includes("/collection")) {
+        return <BackButton />;
+      }
+    }
+
+    // Add mouseDown listener to sideBar ref.
+    useOnClickOutside(sidebarRef, () => setShowSidebar(false));
+
+
 
   return (
     <ReservoirKitProvider

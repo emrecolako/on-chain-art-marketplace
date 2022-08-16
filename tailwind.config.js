@@ -4,7 +4,7 @@ const FONT_FAMILY = process.env.NEXT_PUBLIC_FONT_FAMILY || 'Inter'
 const BODY_FONT_FAMILY = process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'Inter'
 const MONO_FONT_FAMILY =
   process.env.NEXT_PUBLIC_BODY_FONT_FAMILY || 'ui-monospace'
-const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'default'
+const PRIMARY_COLOR = process.env.NEXT_PUBLIC_PRIMARY_COLOR || 'gray'
 
 const primaryColors = require('./colors')
 
