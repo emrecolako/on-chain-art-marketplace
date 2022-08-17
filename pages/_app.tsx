@@ -229,7 +229,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <GlobalProvider>
         <RecoilRoot>
           <WagmiConfig client={client}>
-            <AnalyticsProvider>
+            {/* <AnalyticsProvider> */}
               <ThemeProvider
                 attribute="class"
                 defaultTheme={defaultTheme}
@@ -239,7 +239,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               >
                 <Component {...pageProps} />
               </ThemeProvider>
-            </AnalyticsProvider>
+            {/* </AnalyticsProvider> */}
           </WagmiConfig>
         </RecoilRoot>
       </GlobalProvider>
